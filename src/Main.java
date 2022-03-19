@@ -32,6 +32,25 @@ public class Main {
 
         compare(convertedTestList,convertedTreainingList,k,sampleSize);
 
+        System.out.println("Czy chcesz podać nowy obiekt do sprawdzenia klasyfikacji? (tak/nie)");
+        Scanner scanner = new Scanner(System.in);
+        String answer = scanner.nextLine();
+
+        if(answer.equals("tak")){
+            newTest(convertedTreainingList);
+            System.out.println("Kontunuowac dodawanie obiektow do klasyfikacji? (tak/nie)");
+            String answerNext = scanner.nextLine();
+
+            while( answerNext.equals("tak")){
+                newTest(convertedTreainingList);
+                System.out.println("Kontunuowac dodawanie obiektow do klasyfikacji? (tak/nie)");
+                answerNext = scanner.nextLine();
+            }
+
+        }
+        System.out.println("Program zakonczony");
+
+
 
     }
     public static List<String> csvToList(String path) throws IOException {
@@ -91,6 +110,64 @@ public class Main {
         System.out.println("Skutecznosc wynosi: " + ((succesNumber * 100)/ sampleSize) + "%");
         System.out.println(succesNumber);
 
+    }
+
+    public static void newTest(String[] train){
+        List<String> neighborName = new ArrayList<>();
+        List<String> limitNeighborName = new ArrayList<>();
+        List<Integer> flower = new ArrayList<>();
+        int irisSetosa=0;
+        int irisVersicolor = 0;
+        int irisVirginica =0;
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Prosze podac pierwszy atrybut");
+        double a1 = scanner.nextDouble();
+        System.out.println("Prosze podac drugi atrybut");
+        double a2 = scanner.nextDouble();
+        System.out.println("Prosze podac trzeci atrybut");
+        double a3 = scanner.nextDouble();
+        System.out.println("Prosze podac czwarty atrybut");
+        double a4 = scanner.nextDouble();
+        System.out.println("Prosze podac liczbe k");
+        int k = scanner.nextInt();
+
+        for(int i = 0; i < train.length; i += 5){
+            double distance = Math.sqrt(
+                    Math.pow(a1 - Double.parseDouble(train[i]), 2.0) +
+                    Math.pow(a2 - Double.parseDouble(train[i + 1]), 2.0) +
+                    Math.pow(a3 - Double.parseDouble(train[i + 2]), 2.0) +
+                    Math.pow(a4 - Double.parseDouble(train[i + 3]), 2.0)
+            );
+            neighborName.add(distance + " " + train[i + 4]);
+            Collections.sort(neighborName);
+        }
+        for(int i = 0; i <k; i++) {
+            limitNeighborName.add(neighborName.get(i));
+        }
+        for(int i = 0; i<k; i++) {
+            if(limitNeighborName.get(i).contains("Iris-setosa")) {
+                irisSetosa++;
+            }
+            else if(limitNeighborName.get(i).contains("Iris-versicolor")) {
+                irisVersicolor++;
+            }
+            else if(limitNeighborName.get(i).contains("Iris-virginica")) {
+                irisVirginica++;
+            }
+        }
+        flower.add(irisSetosa);
+        flower.add(irisVersicolor);
+        flower.add(irisVirginica);
+
+        if(irisSetosa > irisVersicolor && irisSetosa > irisVirginica) {
+            System.out.println("Wynik przydziału: iris-setosa");
+        }else if(irisVersicolor > irisSetosa && irisVersicolor > irisVirginica) {
+            System.out.println("Wynik przydziału: iris-versicolor");
+        }else {
+            System.out.println("Wynik przydziału: iris-virginica");
+        }
     }
 
 }
